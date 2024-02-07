@@ -5,12 +5,18 @@ using UnityEngine.InputSystem;
 
 public class PlayerController : MonoBehaviour
 {
-
+    //properties of Rigidbody: Addforce, velocity
     Rigidbody rb;
+    [SerializeField] GameObject bullet;
+    [SerializeField] float bulletSpeed = 100;
     [SerializeField] float jumpHeight = 5f;
+    int doubleJumpCount = 0;
     bool onGround = true;
     float speed = 10;
-    int doubleJumpCount = 0;
+
+
+    int ammo = 30;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -20,7 +26,7 @@ public class PlayerController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+
     }
 
     void OnMove(InputValue value) //control type: Vector 2 --> {x,y}
@@ -32,6 +38,22 @@ public class PlayerController : MonoBehaviour
         //transform.position, transform.rotation, transform.forward, transfrom.right
         rb.velocity = input.y * transform.forward + input.x * transform.right;
         rb.velocity *= speed;
+    }
+
+    void OnFire(InputValue fireVal) //this function will be called when the fire is triggered
+    {
+        if(ammo > 0)
+        {
+            GameObject bulletInstance = Instantiate(bullet, transform.position + 0.5f * transform.forward, Quaternion.identity);
+            bulletInstance.transform.Rotate(90f, 0f, 0f);
+            Rigidbody bulletRigidbody = bulletInstance.GetComponent<Rigidbody>();
+
+            bulletRigidbody.AddForce(bulletSpeed * transform.forward);
+
+            ammo--;
+
+        }
+        Debug.Log("FIRING");
     }
 
     void OnJump()
@@ -65,5 +87,4 @@ public class PlayerController : MonoBehaviour
             onGround = false;
         }
     }
-
 }
